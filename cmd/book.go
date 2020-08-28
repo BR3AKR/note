@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"text/template"
 
 	"github.com/spf13/cobra"
@@ -70,6 +71,7 @@ var bookCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("error building directory structure: %v", err)
 		}
+		defer exec.Command("code", config.Paths.Base, getIndexPath(dir)).Run()
 
 		err = createIndex(book, dir)
 		if err != nil {
@@ -135,7 +137,7 @@ func buildDirStruct(title string) (string, error) {
 }
 
 func createIndex(book *Book, dir string) error {
-	idxf, err := os.Create(fmt.Sprintf(config.Paths.Book+indexFile, dir))
+	idxf, err := os.Create(getIndexPath(dir))
 	if err != nil {
 		return err
 	}
@@ -144,6 +146,10 @@ func createIndex(book *Book, dir string) error {
 	w := bufio.NewWriter(idxf)
 	defer w.Flush()
 	return indexTmpl.Execute(w, book)
+}
+
+func getIndexPath(dir string) string {
+	return fmt.Sprintf(config.Paths.Book+indexFile, dir)
 }
 
 func createChapters(chapters []*Chapter, dir string) error {

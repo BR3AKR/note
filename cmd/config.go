@@ -12,9 +12,11 @@ import (
 type Config struct {
 	FullName string `yaml:"fullname"`
 	Paths    struct {
+		Base    string `yaml:"base"`
 		Blog    string `yaml:"blog"`
 		Book    string `yaml:"book"`
 		Morning string `yaml:"morning"`
+		Meeting string `yaml:"meeting"`
 	} `yaml:paths`
 }
 

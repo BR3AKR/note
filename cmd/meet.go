@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"os/exec"
 	"text/template"
@@ -30,30 +31,41 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Morning is a morning pages entry
-type Morning struct {
-	Date   time.Time
-	Author string
+// Meeting is a meet pages entry
+type Meeting struct {
+	Date         time.Time
+	Title        string
+	Author       string
+	Agenda       []string
+	Participants []string
 }
 
-const morningTmplFile = "/templates/morning/morning.md"
+const meetTmplFile = "/templates/meet/meeting.md"
 
-var mornTmpl *template.Template
+var meetTmpl *template.Template
 
-var morningCmd = &cobra.Command{
-	Use:   "morning",
-	Short: "Creates the shell for morning pages and opens vscode",
+var meetCmd = &cobra.Command{
+	Use:   "meet",
+	Short: "Creates the shell for meet notes and opens vscode",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		morning := &Morning{
-			Date:   time.Now().UTC(),
-			Author: config.FullName,
+		meet := &Meeting{
+			Date:         time.Now().UTC(),
+			Author:       config.FullName,
+			Title:        prompt("title: "),
+			Agenda:       repeatPrompt("agenda item: "),
+			Participants: repeatPrompt("participant: "),
 		}
 
-		fileName := config.Paths.Morning + "/" + morning.Date.Format("2006-01-02-0304") + ".md"
+		fmtTitle, err := formatDirName(meet.Title)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fileName := config.Paths.Meeting + "/" + fmtTitle + ".md"
 		defer exec.Command("code", config.Paths.Base, fileName).Run()
 
-		createDirs(config.Paths.Morning)
+		createDirs(config.Paths.Meeting)
 
 		file, err := os.Create(fileName)
 		if err != nil {
@@ -64,17 +76,17 @@ var morningCmd = &cobra.Command{
 		w := bufio.NewWriter(file)
 		defer w.Flush()
 
-		if err = mornTmpl.Execute(w, morning); err != nil {
+		if err = meetTmpl.Execute(w, meet); err != nil {
 			panic(err)
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(morningCmd)
+	rootCmd.AddCommand(meetCmd)
 
 	var err error
-	mornTmpl, err = prepareTemplate(morningTmplFile)
+	meetTmpl, err = prepareTemplate(meetTmplFile)
 	if err != nil {
 		panic(err)
 	}
