@@ -20,7 +20,9 @@
 
 package main
 
-import "github.com/sksmith/note/cmd"
+import (
+	"github.com/sksmith/note/cmd"
+)
 
 func main() {
 	cmd.Execute()

@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"os/exec"
 	"text/template"
@@ -56,20 +55,17 @@ var blogCmd = &cobra.Command{
 
 		blog := &BlogEntry{
 			Date:     time.Now().UTC(),
-			Author:   "Sean K Smith",
+			Author:   config.FullName,
 			Title:    prompt("title: "),
 			Subtitle: prompt("subtitle: "),
 			Tags:     repeatPrompt("tag: "),
 			ID:       uid.String(),
 		}
 
-		blogpath := os.Getenv("BLOGPATH")
-		if blogpath == "" {
-			fmt.Println("BLOGPATH environment variable not set, using home/blog")
-			blogpath, _ = os.UserHomeDir()
-		}
-		fileName := blogpath + "/" + blog.Date.Format("2006-01-02-0304") + ".md"
-		defer exec.Command("code", blogpath, fileName).Run()
+		fileName := config.Paths.Blog + "/" + blog.Date.Format("2006-01-02-0304") + ".md"
+		defer exec.Command("code", config.Paths.Blog, fileName).Run()
+
+		createDirs(config.Paths.Blog)
 
 		file, err := os.Create(fileName)
 		if err != nil {

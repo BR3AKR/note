@@ -48,8 +48,9 @@ type Book struct {
 
 const indexTmplFile = "/templates/book/index.md"
 const chapterTmplFile = "/templates/book/chapter.md"
-const indexFile = "./%s/index.md"
-const chapterFile = "./%s/%s"
+const indexFile = "/%s/index.md"
+const chapterFile = "/%s/%s"
+const imageDir = "/%s/images"
 
 var indexTmpl *template.Template
 var chapterTmpl *template.Template
@@ -129,12 +130,12 @@ func buildDirStruct(title string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = createDirs([]string{fmt.Sprintf("./%s/images", dir)})
+	err = createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
 	return dir, err
 }
 
 func createIndex(book *Book, dir string) error {
-	idxf, err := os.Create(fmt.Sprintf(indexFile, dir))
+	idxf, err := os.Create(fmt.Sprintf(config.Paths.Book+indexFile, dir))
 	if err != nil {
 		return err
 	}
@@ -147,7 +148,7 @@ func createIndex(book *Book, dir string) error {
 
 func createChapters(chapters []*Chapter, dir string) error {
 	for _, ch := range chapters {
-		chf, err := os.Create(fmt.Sprintf(chapterFile, dir, ch.File))
+		chf, err := os.Create(fmt.Sprintf(config.Paths.Book+chapterFile, dir, ch.File))
 		if err != nil {
 			return err
 		}

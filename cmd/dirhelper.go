@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-func createDirs(dirs []string) error {
+func createDirs(dirs ...string) error {
 	for i, dir := range dirs {
 		err := os.MkdirAll(dir, filePermissions)
 		if err != nil {
-			if delErr := deleteDirs(dirs[:i]); delErr != nil {
+			if delErr := deleteDirs(dirs[:i]...); delErr != nil {
 				err = fmt.Errorf(`error creating directory "%s": %s, unable to clean up: %s`, dirs[i], err.Error(), delErr.Error())
 			}
 			return err
@@ -20,7 +20,7 @@ func createDirs(dirs []string) error {
 	return nil
 }
 
-func deleteDirs(dirs []string) error {
+func deleteDirs(dirs ...string) error {
 	for _, dir := range dirs {
 		if err := os.RemoveAll(dir); err != nil {
 			return err

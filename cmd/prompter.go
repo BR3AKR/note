@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var s *bufio.Scanner
+
 func prompt(prompt string) string {
 	fmt.Print(prompt)
 	if s == nil {

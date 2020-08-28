@@ -18,26 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// TODO - Increase test coverage
-// TODO - Update source control
-// TODO - Add config file
-//         - home directory, etc.
-// TODO - Add github integration
-
 package cmd
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"os"
-	"os/user"
 
 	"github.com/spf13/cobra"
 )
-
-var cfgFile string
-var s *bufio.Scanner
 
 const filePermissions = 0755
 
@@ -51,32 +39,24 @@ template useful for detailed note taking. Store the project
 in a git repository for easy access and tracking fo your
 notes.`,
 }
+var config Config
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	f, err := getConfigFile()
+	handleErr(err)
+	defer f.Close()
+
+	config, err = parseConfigs(f)
+	handleErr(err)
+
+	handleErr(rootCmd.Execute())
+}
+
+func handleErr(err error) {
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
-	}
-}
-
-// Settings represents application settings supplied by the user
-type Settings struct {
-	Home    string
-	BlogDir string `json:"blogdir"`
-}
-
-var settings *Settings
-
-func loadSettings() {
-	usr, err := user.Current()
-
-	if err != nil {
-		log.Fatal("Unable to acquire user")
-	}
-
-	settings = &Settings{
-		Home: usr.HomeDir,
 	}
 }
