@@ -27,7 +27,6 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/gobuffalo/packr"
 	"github.com/spf13/cobra"
 )
 
@@ -47,8 +46,8 @@ type Book struct {
 	Chapters                   []*Chapter
 }
 
-const indexTmplFile = "./book/index.md"
-const chapterTmplFile = "./book/chapter.md"
+const indexTmplFile = "/templates/book/index.md"
+const chapterTmplFile = "/templates/book/chapter.md"
 const indexFile = "./%s/index.md"
 const chapterFile = "./%s/%s"
 
@@ -85,9 +84,15 @@ var bookCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(bookCmd)
-	box := packr.NewBox("../templates")
-	indexTmpl = template.Must(template.New("index.md").Parse(box.String(indexTmplFile)))
-	chapterTmpl = template.Must(template.New("chapter.md").Parse(box.String(chapterTmplFile)))
+	var err error
+	indexTmpl, err = prepareTemplate(indexTmplFile)
+	if err != nil {
+		panic(err)
+	}
+	chapterTmpl, err = prepareTemplate(chapterTmplFile)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func promptForBook() (*Book, error) {

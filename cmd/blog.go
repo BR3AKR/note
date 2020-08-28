@@ -28,7 +28,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gobuffalo/packr"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 )
@@ -43,7 +42,7 @@ type BlogEntry struct {
 	Tags     []string
 }
 
-const entryTmplFile = "./blog/entry.md"
+const entryTmplFile = "/templates/blog/entry.md"
 
 var tmpl *template.Template
 
@@ -81,8 +80,7 @@ var blogCmd = &cobra.Command{
 		w := bufio.NewWriter(file)
 		defer w.Flush()
 
-		err = tmpl.Execute(w, blog)
-		if err != nil {
+		if err = tmpl.Execute(w, blog); err != nil {
 			panic(err)
 		}
 	},
@@ -90,6 +88,10 @@ var blogCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(blogCmd)
-	box := packr.NewBox("../templates")
-	tmpl = template.Must(template.New("entry.md").Parse(box.String(entryTmplFile)))
+
+	var err error
+	tmpl, err = prepareTemplate(entryTmplFile)
+	if err != nil {
+		panic(err)
+	}
 }
