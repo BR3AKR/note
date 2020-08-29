@@ -42,16 +42,12 @@ type Chapter struct {
 
 // Book represents the book getting created
 type Book struct {
-	Title, Subtitle, Published string
-	Authors                    []string
-	Chapters                   []*Chapter
+	Title     string
+	Subtitle  string
+	Published string
+	Authors   []string
+	Chapters  []*Chapter
 }
-
-const indexTmplFile = "/templates/book/index.md"
-const chapterTmplFile = "/templates/book/chapter.md"
-const indexFile = "/%s/index.md"
-const chapterFile = "/%s/%s"
-const imageDir = "/%s/images"
 
 var indexTmpl *template.Template
 var chapterTmpl *template.Template
@@ -86,14 +82,15 @@ var bookCmd = &cobra.Command{
 }
 
 func init() {
+	const indexTmplFile = "/templates/book/index.md"
+	const chapterTmplFile = "/templates/book/chapter.md"
+
 	rootCmd.AddCommand(bookCmd)
 	var err error
-	indexTmpl, err = prepareTemplate(indexTmplFile)
-	if err != nil {
+	if indexTmpl, err = prepareTemplate(indexTmplFile); err != nil {
 		panic(err)
 	}
-	chapterTmpl, err = prepareTemplate(chapterTmplFile)
-	if err != nil {
+	if chapterTmpl, err = prepareTemplate(chapterTmplFile); err != nil {
 		panic(err)
 	}
 }
@@ -132,6 +129,7 @@ func buildDirStruct(title string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	const imageDir = "/%s/images"
 	err = createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
 	return dir, err
 }
@@ -141,25 +139,28 @@ func createIndex(book *Book, dir string) error {
 	if err != nil {
 		return err
 	}
-
 	defer idxf.Close()
+
 	w := bufio.NewWriter(idxf)
 	defer w.Flush()
 	return indexTmpl.Execute(w, book)
 }
 
 func getIndexPath(dir string) string {
+	const indexFile = "/%s/index.md"
 	return fmt.Sprintf(config.Paths.Book+indexFile, dir)
 }
 
 func createChapters(chapters []*Chapter, dir string) error {
+	const chapterFile = "/%s/%s"
+
 	for _, ch := range chapters {
 		chf, err := os.Create(fmt.Sprintf(config.Paths.Book+chapterFile, dir, ch.File))
 		if err != nil {
 			return err
 		}
-
 		defer chf.Close()
+
 		w := bufio.NewWriter(chf)
 		defer w.Flush()
 
