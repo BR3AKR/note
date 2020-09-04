@@ -44,7 +44,7 @@ func TestFormatDirNameInvalid(t *testing.T) {
 func TestCreateDirectories(t *testing.T) {
 	const testDir = "test-dir"
 
-	if err := createDirs([]string{testDir}); err != nil {
+	if err := createDirs(testDir); err != nil {
 		t.Fatalf("unexpected error creating directories: %v", err)
 	}
 
