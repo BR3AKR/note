@@ -17,7 +17,7 @@ type Config struct {
 		Book    string `yaml:"book"`
 		Morning string `yaml:"morning"`
 		Meeting string `yaml:"meeting"`
-	} `yaml:paths`
+	} `yaml:"paths"`
 }
 
 func parseConfigs(r io.Reader) (Config, error) {
