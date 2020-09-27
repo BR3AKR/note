@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"bufio"
-	"os"
 	"os/exec"
 	"text/template"
 	"time"
@@ -66,19 +64,7 @@ var blogCmd = &cobra.Command{
 		defer exec.Command("code", config.Paths.Blog, fileName).Run()
 
 		createDirs(config.Paths.Blog)
-
-		file, err := os.Create(fileName)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		w := bufio.NewWriter(file)
-		defer w.Flush()
-
-		if err = tmpl.Execute(w, blog); err != nil {
-			panic(err)
-		}
+		writeTemplate(tmpl, fileName, blog)
 	},
 }
 

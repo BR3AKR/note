@@ -21,10 +21,8 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"text/template"
 
@@ -130,20 +128,12 @@ func buildDirStruct(title string) (string, error) {
 		return "", err
 	}
 	const imageDir = "/%s/images"
-	err = createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
-	return dir, err
+	return dir, createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
 }
 
 func createIndex(book *Book, dir string) error {
-	idxf, err := os.Create(getIndexPath(dir))
-	if err != nil {
-		return err
-	}
-	defer idxf.Close()
-
-	w := bufio.NewWriter(idxf)
-	defer w.Flush()
-	return indexTmpl.Execute(w, book)
+	filename := getIndexPath(dir)
+	return writeTemplate(indexTmpl, filename, book)
 }
 
 func getIndexPath(dir string) string {
@@ -155,17 +145,8 @@ func createChapters(chapters []*Chapter, dir string) error {
 	const chapterFile = "/%s/%s"
 
 	for _, ch := range chapters {
-		chf, err := os.Create(fmt.Sprintf(config.Paths.Book+chapterFile, dir, ch.File))
-		if err != nil {
-			return err
-		}
-		defer chf.Close()
-
-		w := bufio.NewWriter(chf)
-		defer w.Flush()
-
-		err = chapterTmpl.Execute(w, ch)
-		if err != nil {
+		filename := fmt.Sprintf(config.Paths.Book+chapterFile, dir, ch.File)
+		if _, err := writeTemplate(chapterTmpl, filename, ch); err != nil {
 			return err
 		}
 	}

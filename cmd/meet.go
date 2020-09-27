@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -62,21 +61,12 @@ var meetCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fileName := config.Paths.Meeting + "/" + fmtTitle + ".md"
-		defer exec.Command("code", config.Paths.Base, fileName).Run()
+		filename := config.Paths.Meeting + "/" + fmtTitle + ".md"
+		defer exec.Command("code", config.Paths.Base, filename).Run()
 
 		createDirs(config.Paths.Meeting)
 
-		file, err := os.Create(fileName)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		w := bufio.NewWriter(file)
-		defer w.Flush()
-
-		if err = meetTmpl.Execute(w, meet); err != nil {
+		if _, err = writeTemplate(meetTmpl, filename, meet); err != nil {
 			panic(err)
 		}
 	},

@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"bufio"
-	"os"
 	"os/exec"
 	"text/template"
 	"time"
@@ -54,17 +52,7 @@ var morningCmd = &cobra.Command{
 		defer exec.Command("code", config.Paths.Base, fileName).Run()
 
 		createDirs(config.Paths.Morning)
-
-		file, err := os.Create(fileName)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		w := bufio.NewWriter(file)
-		defer w.Flush()
-
-		if err = mornTmpl.Execute(w, morning); err != nil {
+		if _, err := writeTemplate(mornTmpl, fileName, morning); err != nil {
 			panic(err)
 		}
 	},
@@ -74,8 +62,7 @@ func init() {
 	rootCmd.AddCommand(morningCmd)
 
 	var err error
-	mornTmpl, err = prepareTemplate(morningTmplFile)
-	if err != nil {
+	if mornTmpl, err = prepareTemplate(morningTmplFile); err != nil {
 		panic(err)
 	}
 }
