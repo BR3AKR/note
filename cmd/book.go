@@ -128,7 +128,7 @@ func buildDirStruct(title string) (string, error) {
 		return "", err
 	}
 	const imageDir = "/%s/images"
-	return dir, createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
+	return dir, createDirs(fmt.Sprintf(config.Paths.Base+"/"+config.Paths.Book+imageDir, dir))
 }
 
 func createIndex(book *Book, dir string) (err error) {
@@ -142,14 +142,14 @@ func createIndex(book *Book, dir string) (err error) {
 
 func getIndexPath(dir string) string {
 	const indexFile = "/%s/index.md"
-	return fmt.Sprintf(config.Paths.Book+indexFile, dir)
+	return fmt.Sprintf(config.Paths.Base+"/"+config.Paths.Book+indexFile, dir)
 }
 
 func createChapters(chapters []*Chapter, dir string) error {
 	const chapterFile = "/%s/%s"
 
 	for _, ch := range chapters {
-		filename := fmt.Sprintf(config.Paths.Book+chapterFile, dir, ch.File)
+		filename := fmt.Sprintf(config.Paths.Base+"/"+config.Paths.Book+chapterFile, dir, ch.File)
 		if _, err := writeTemplate(chapterTmpl, filename, ch); err != nil {
 			return err
 		}

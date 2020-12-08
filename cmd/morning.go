@@ -48,7 +48,7 @@ var morningCmd = &cobra.Command{
 			Author: config.FullName,
 		}
 
-		fileName := config.Paths.Morning + "/" + morning.Date.Format("2006-01-02-0304") + ".md"
+		fileName := config.Paths.Base + "/" + config.Paths.Morning + "/" + morning.Date.Format("2006-01-02-0304") + ".md"
 		defer exec.Command("code", config.Paths.Base, fileName).Run()
 
 		createDirs(config.Paths.Morning)
