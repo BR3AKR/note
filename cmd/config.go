@@ -45,11 +45,12 @@ func getConfigFile() (*os.File, error) {
 	}
 	filename := home + "/.config/note.yml"
 	fmt.Println("unable to find a note configuration, creating one at: " + filename)
+	defaultBase := home + "/notes"
 	config := &Config{
 		FullName: prompt("full name: "),
 		Paths: ConfigPaths{
-			Base:    prompt("base path (~/notes): ", "~/notes"),
-			Blog:    "~/blog",
+			Base:    prompt("base path ("+defaultBase+"): ", defaultBase),
+			Blog:    home + "/blog",
 			Book:    "books",
 			Morning: "morning-pages",
 			Meeting: "inbox",

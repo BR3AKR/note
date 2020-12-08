@@ -62,7 +62,7 @@ var meetCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		filename := config.Paths.Base + "/" + config.Paths.Meeting + "/" + fmtTitle + ".md"
-		defer exec.Command("code", config.Paths.Base, filename).Run()
+		defer exec.Command("code", filename).Run()
 
 		createDirs(config.Paths.Meeting)
 
