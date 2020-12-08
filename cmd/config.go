@@ -50,9 +50,9 @@ func getConfigFile() (*os.File, error) {
 		Paths: ConfigPaths{
 			Base:    prompt("base path (~/notes): ", "~/notes"),
 			Blog:    "~/blog",
-			Book:    "/books",
-			Morning: "/morning-pages",
-			Meeting: "/inbox",
+			Book:    "books",
+			Morning: "morning-pages",
+			Meeting: "inbox",
 		},
 	}
 	out, err := yaml.Marshal(config)
