@@ -49,17 +49,17 @@ func prepareTemplate(filename string) (*template.Template, error) {
 	return template.Must(template.New(f.Info().Name).Parse(string(d))), nil
 }
 
-func writeTemplate(template *template.Template, filename string, data interface{}) (file File, err error) {
+func writeTemplate(template *template.Template, filename string, data interface{}) (file *os.File, err error) {
 	file, err = os.Create(filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
 	w := bufio.NewWriter(file)
 	defer w.Flush()
 
-	return template.Execute(w, data)
+	return file, template.Execute(w, data)
 }
 
 func prompt(prompt string) string {

@@ -131,9 +131,13 @@ func buildDirStruct(title string) (string, error) {
 	return dir, createDirs(fmt.Sprintf(config.Paths.Book+imageDir, dir))
 }
 
-func createIndex(book *Book, dir string) error {
+func createIndex(book *Book, dir string) (err error) {
 	filename := getIndexPath(dir)
-	return writeTemplate(indexTmpl, filename, book)
+	_, err = writeTemplate(indexTmpl, filename, book)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func getIndexPath(dir string) string {
