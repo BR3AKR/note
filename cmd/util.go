@@ -62,13 +62,17 @@ func writeTemplate(template *template.Template, filename string, data interface{
 	return file, template.Execute(w, data)
 }
 
-func prompt(prompt string) string {
+func prompt(prompt string, def ...string) string {
 	fmt.Print(prompt)
 	if s == nil {
 		s = bufio.NewScanner(os.Stdin)
 	}
 	s.Scan()
-	return strings.TrimSpace(s.Text())
+	v := strings.TrimSpace(s.Text())
+	if v == "" && len(def) > 0 {
+		v = def[0]
+	}
+	return v
 }
 
 func repeatPrompt(promptStr string) []string {
